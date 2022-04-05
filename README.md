@@ -9,6 +9,7 @@ And to run:
 > ./thread
 
 BEHAVIOR
+
 This program initializes some numbers and passes them into a threaded function to be printed.
 
 While the code is well formatted, it includes some logical errors that make the code act in certain undesirable ways.
