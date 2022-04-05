@@ -4,6 +4,8 @@ A simple example of a program involving multiple threads of execution to demonst
 USAGE
 From this directory, run this command to compile:
 > gcc threads.c -o thread -lpthread
+And to run:
+> ./thread
 
 BEHAVIOR
 This program initializes some numbers and passes them into a threaded function to be printed.
