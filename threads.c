@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     pthread_create(&t2, NULL, (void *(*)(void*)) count, &threadNum[1]);
     pthread_create(&t3, NULL, (void *(*)(void*)) count, &threadNum[2]);
     pthread_create(&t4, NULL, (void *(*)(void*)) count, &threadNum[3]);
-    printf("But what if we want them in a specific order?\n");
+    printf("\nBut what if we want them in a specific order?\n");
     pthread_create(&t1, NULL, (void *(*)(void*)) count, &threadNum[0]);
     pthread_create(&t2, NULL, (void *(*)(void*)) count, &threadNum[1]);
     pthread_create(&t3, NULL, (void *(*)(void*)) count, &threadNum[2]);
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     pthread_join(t2, NULL);
     pthread_join(t3, NULL);
     pthread_join(t4, NULL);
-    printf("Did you catch what happened and why?");
+    printf("Did you catch what happened and why?\n");
     free(threadNum);
     return 0;
 }
@@ -73,6 +73,7 @@ int main(int argc, char* argv[]) {
 void count(void* data) {
     int* num = (int*)data;
     for(int i = *num; i < *num+5; i++) {
-        printf("%d\n", i);
+        printf("%d ", i);
     }
+    printf("\n");
 }
