@@ -45,12 +45,17 @@ int main(int argc, char* argv[]) {
     /* Now we're creating threads with pthread_create().
     The first argument is a reference to the thread, the pthread_t variables declared above.
     Notice we don't initialize them with anything -- the pthread_create function takes care of that.
+    
     The second argument is for thread attributes.  These are very advanced and fiddly, so
     we don't really need to worry about them except that they should all be default.  Passing
     in a value of NULL just initializes the thread with default values.
+    
     The third argument is the method that the thread should run when it is created.
-    The pointer cast looks kind of crazy, but basically it just means that the function isn't expected
-    to return anything.  Some compilers don't like if this isn't present.
+    The pointer cast looks kind of crazy, but if you break it down:
+    void* : the return value is a void pointer
+    (*): a pointer to a function
+    (void *): which takes an untyped pointer as a parameter
+
     The last argument is a pointer to a piece of data to pass into the function.
 
     It might help to visualize this as
@@ -58,6 +63,8 @@ int main(int argc, char* argv[]) {
     to think about what's really happening.  But because we can pass anything in here, it appears in
     the method itself as a void* -- it will work if you know what kind of data it is and attempt to use it,
     but compilers and people reading your code would prefer you cast it to the kind of data you actually use.
+    Otherwise the type of data you're actually receiving will seem like a mystery and manipulating it seems like magic.
+    Not good for anyone who has to maintain your code.
      */ 
     pthread_create(&t1, NULL, (void *(*)(void*)) count, &threadNum[0]);
     pthread_join(t1, NULL);
