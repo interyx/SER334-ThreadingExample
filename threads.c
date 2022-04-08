@@ -2,7 +2,7 @@
  * @file threads.c
  * @author Joseph Luensmann (jluensma@asu.edu)
  * @brief A short example to show threading syntax in C and demonstrate some of its issues.
- * @version 1.0
+ * @version 2.0
  * @date 2022-04-05
  * 
  * @copyright Copyright (c) 2022
@@ -17,6 +17,12 @@
 /////////////////////////////////////////////////////////////
 // MACRO DEFINITIONS
 #define THREAD_COUNT 4 // this is how we define a macro for the number of threads.  Might be useful...
+/////////////////////////////////////////////////////////////
+// STRUCTS
+struct thread_info {
+    pthread_t thread;
+    int num;
+} typedef thread_info;
 /////////////////////////////////////////////////////////////
 // FUNCTION PROTOTYPING
 void count(void* data);
@@ -41,7 +47,7 @@ int main(int argc, char* argv[]) {
     }
     // here we declare some pthreads our method will use to actually launch the threads
     pthread_t t1, t2, t3, t4;
-    printf("Is this really concurrent?\n");
+    printf("Is this really concurrent?\n--------------------\n");
     /* Now we're creating threads with pthread_create().
     The first argument is a reference to the thread, the pthread_t variables declared above.
     Notice we don't initialize them with anything -- the pthread_create function takes care of that.
@@ -75,28 +81,39 @@ int main(int argc, char* argv[]) {
     pthread_create(&t4, NULL, (void *(*)(void*)) count, &threadNum[3]);
     pthread_join(t4, NULL);
     // The above block of code starts four threads and waits for them to join.  Is this really concurrency?
-    printf("Let's try that again.\n");
-    pthread_create(&t1, NULL, (void *(*)(void*)) count, &threadNum[0]);
-    pthread_create(&t2, NULL, (void *(*)(void*)) count, &threadNum[1]);
-    pthread_create(&t3, NULL, (void *(*)(void*)) count, &threadNum[2]);
-    pthread_create(&t4, NULL, (void *(*)(void*)) count, &threadNum[3]);
-    // We do it again here without waiting for them to finish.
-    printf("\nBut what if we want them in a specific order?\n");
+    printf("\nDynamically created threads.\n--------------------\n");
     // then we head into the next code block to do it again
-    pthread_create(&t1, NULL, (void *(*)(void*)) count, &threadNum[0]);
-    pthread_create(&t2, NULL, (void *(*)(void*)) count, &threadNum[1]);
-    pthread_create(&t3, NULL, (void *(*)(void*)) count, &threadNum[2]);
-    pthread_create(&t4, NULL, (void *(*)(void*)) count, &threadNum[3]);
-    pthread_join(t1, NULL);
-    pthread_join(t2, NULL);
-    pthread_join(t3, NULL);
-    pthread_join(t4, NULL);
-    // this time we'll wait for them to finish
-    // before running this, can you anticipate what's going to happen?
-    // try running it and see if you're right.  And if something unexpected happens,
-    // can you explain it?
-    printf("Did you catch what happened and why?\n");
+    // Manually creating a block of threads is pretty clunky.  Let's explore how to do it dynamically.
+    // Again, we're allocating an array, but this time the array is of type pthread_t, so
+    // these will all be pointers to thread variables.
+    pthread_t* threadArr = (pthread_t*)malloc(THREAD_COUNT * sizeof(pthread_t));
+    for(int i = 0; i < THREAD_COUNT; i++) {
+        // Note that we didn't initialize these.  Are we going to get segmentation faults?  Why or why not?
+        pthread_create(&threadArr[i], NULL, (void *(*)(void *)) count, &threadNum[i]);
+    }
+    // well, we've dynamically allocated these pthreads, let's dynamically join them.
+    for(int i = 0; i < THREAD_COUNT; i++) {
+        pthread_join(threadArr[i], NULL);
+    }
+    printf("\nThreads created by a custom datatype.\n--------------------\n");
+    // We've explored two approaches to creating threads, now let's try a third.
+    // for this, we'll use a new struct.
+    thread_info* threadStruct = (thread_info*)malloc(THREAD_COUNT * sizeof(struct thread_info));
+    for(int i = 0; i < THREAD_COUNT; i++) {
+        threadStruct[i].num = i * 5;
+    }
+    for(int i = 0; i < THREAD_COUNT; i++) {
+        pthread_create(&threadStruct[i].thread, NULL, (void *(*) (void *)) count, &threadStruct[i].num);
+    }
+    // for(int i = 0; i < THREAD_COUNT; i++) {
+    //     pthread_join(threadStruct[i].thread, NULL);
+    // }
     free(threadNum); // always free your memory!  no leaks!
+    threadNum = NULL;
+    free(threadArr);
+    threadArr = NULL;
+    free(threadStruct);
+    threadStruct = NULL;
     return 0;
 }
 
