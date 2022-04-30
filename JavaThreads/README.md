@@ -1,4 +1,4 @@
-# Java Threads
+# Threading in Java
 
 A simple example of threading in Java for SER 334.  Similar to the C threading example but modified to work with Java's thread implementation.
 
