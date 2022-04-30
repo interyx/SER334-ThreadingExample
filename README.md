@@ -1,4 +1,7 @@
 # SER334-ThreadingExample
+
+[Video Code Walkthrough](https://youtu.be/Rd8unw6Xem8)
+
 A simple example of a program involving multiple threads of execution to demonstrate the funamentals.
 
 USAGE
