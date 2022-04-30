@@ -1,4 +1,4 @@
-# SER334-ThreadingExample
+## Threading in C
 A simple example of a program involving multiple threads of execution to demonstrate the funamentals.
 
 USAGE
