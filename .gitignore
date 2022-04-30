@@ -1,2 +1,4 @@
 thread
+threads
 /.vscode
+/JavaThreads/*.class
